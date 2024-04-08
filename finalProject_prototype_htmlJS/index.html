@@ -3,14 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="Latex2tex.js"></script>
     <title>Convert LaTex2Text</title>
+    
+    <script src="Latex2text.js"></script>
+    <script src="https://editor.codecogs.com/eqneditor.api.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://editor.codecogs.com/eqneditor.css"/>
+    <script>
+        window.onload = function () {
+            textarea = EqEditor.TextArea.link('latexInput')
+            .addOutput(new EqEditor.Output('output'))
+            .addHistoryMenu(new EqEditor.History('history'));
+        
+            EqEditor.Toolbar.link('toolbar').addTextArea(textarea);
+        }
+        window.addEventListener('load', convertLatex());
+        function convertLatex() {
+            let spanElement = document.getElementById('latexInput').getElementsByTagName("span");
+            var children = latexInput.childNodes;
+            var textContent = "";
+            for (var i = 0; i < children.length; i++) {
+                if (children[i].nodeName === "SPAN") {
+                    textContent += children[i].textContent;
+                }
+            }
+            console.log(textContent);
+            // tring.js 함수 사용(한글 변환)
+            let convertedKor = main(textContent);
+            console.log("html: convertedKor: ", convertedKor);
+            displayList(convertedKor);
+        }
+        function displayList(convertedKor) {
+            var listContainer = document.getElementById("converted-kor"); // 목록을 표시할 요소 가져오기
+            listContainer.innerHTML = ""; // 기존에 생성된 요소 모두 제거
+
+            // 새로운 span 태그 생성 및 추가
+            for (var i = 0; i < convertedKor.length; i++) {
+                var span = document.createElement("span");
+                span.textContent = convertedKor[i] + ' ';
+                listContainer.appendChild(span);
+            }
+            
+        }
+    </script>
 </head>
 <body>
     <h1>LaTex을 한글로 변환해드립니다.</h1>
     <h3>LaTex 수식 입력</h3>
-    <textarea id="input" style="width: 500px; height: 200px;"></textarea><br>
-    <button onclick="Convert()">convert</button><br>
-    <textarea id="output" style="width: 500px; height: 200px;"></textarea>
+    <textarea id="TextArea_input" style="width: 500px; height: 200px;"></textarea><br>
+    <button onclick="Disassemble_first()">convert</button><br>
+    <textarea id="TextArea_output" style="width: 500px; height: 200px;"></textarea>
+    
+    <!-- converter api 적용  -->
+    <div id="equation-editor">
+        <div id="history"></div>
+        <div id="toolbar"></div>
+        <div id="latexInput" placeholder="Write Equation here..."></div>
+        <button onclick="convertLatex()">Convert</button>
+        <div id="equation-output">
+          <img id="output">
+          <div id="converted-kor"></div>
+        </div>
+    </div>
 </body>
 </html>
